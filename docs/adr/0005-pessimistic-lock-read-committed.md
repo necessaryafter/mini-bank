@@ -1,4 +1,4 @@
-# ADR 0005 — Lock pessimista de conta e uso explícito de READ COMMITTED no capture
+# ADR 0005 - Lock pessimista de conta e uso explícito de READ COMMITTED no capture
 
 ## Status
 Aceito
@@ -10,7 +10,7 @@ A saída mais comum do mercado para esse tipo de conflito é o *optimistic locki
 
 Decidimos usar o clássico `SELECT ... FOR UPDATE` na linha da conta (através do método `lockAccount`, detalhado na ADR 0003) para funcionar como um mutex. Contudo, essa escolha escondia uma pegadinha perigosa: por padrão, o framework Exposed utiliza o nível de isolamento `REPEATABLE READ`, e não o `READ COMMITTED` (que é o padrão nativo do Postgres).
 
-Sob o `REPEATABLE READ`, o snapshot da transação é travado logo na primeira consulta. Na prática, isso significava que mesmo após a nossa thread esperar pacientemente e conseguir o lock da conta, a consulta seguinte para pegar o saldo (`currentBalance()`) continuaria enxergando a foto do passado — ignorando o saldo real que a transação anterior tinha acabado de salvar. Como a linha da conta em si só sofre o lock e nunca é alterada diretamente (o que muda são as tabelas de transações), o Postgres não detectava isso como um conflito de serialização. O resultado era uma leitura silenciosamente desatualizada (um *lost update* invisível), e não um erro explícito.
+Sob o `REPEATABLE READ`, o snapshot da transação é travado logo na primeira consulta. Na prática, isso significava que mesmo após a nossa thread esperar pacientemente e conseguir o lock da conta, a consulta seguinte para pegar o saldo (`currentBalance()`) continuaria enxergando a foto do passado, ignorando o saldo real que a transação anterior tinha acabado de salvar. Como a linha da conta em si só sofre o lock e nunca é alterada diretamente (o que muda são as tabelas de transações), o Postgres não detectava isso como um conflito de serialização. O resultado era uma leitura silenciosamente desatualizada (um *lost update* invisível), e não um erro explícito.
 
 ## Decisão
 O método `capture()` passa a usar obrigatoriamente `@Transactional(isolation = Isolation.READ_COMMITTED)`.

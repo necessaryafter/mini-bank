@@ -5,6 +5,12 @@ plugins {
 
 description = "Owns bank account data and the double-entry ledger of transactions"
 
+// Generates META-INF/build-info.properties so /actuator/info reports the running
+// build (name, version, timestamp) instead of an empty payload.
+springBoot {
+    buildInfo()
+}
+
 dependencyManagement {
     imports {
         mavenBom(libs.spring.cloud.aws.dependencies.get().toString())
@@ -17,6 +23,7 @@ dependencies {
     implementation(libs.spring.boot.starter.webmvc)
     implementation(libs.spring.boot.starter.validation)
     implementation(libs.spring.boot.starter.actuator)
+    implementation(libs.springdoc.openapi.starter.webmvc.ui)
     implementation(libs.spring.boot.starter.flyway)
     implementation(libs.spring.boot.starter.data.redis)
     implementation(libs.spring.cloud.aws.starter.sqs)

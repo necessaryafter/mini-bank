@@ -1,4 +1,4 @@
-# ADR 0008 — Sinais de fraude auto-declarados pelo cliente (device, geo, IP)
+# ADR 0008 - Sinais de fraude auto-declarados pelo cliente (device, geo, IP)
 
 ## Status
 Aceito (com ressalva de segurança explícita)

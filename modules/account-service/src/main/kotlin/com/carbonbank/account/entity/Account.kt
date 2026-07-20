@@ -13,9 +13,17 @@ import org.jetbrains.exposed.sql.selectAll
 import java.util.UUID
 
 class Account(id: EntityID<UUID>) : BaseUUIDEntity(id, Accounts) {
-    companion object : UUIDEntityClass<Account>(Accounts)
+    companion object : UUIDEntityClass<Account>(Accounts) {
+        // System account that issues the money for every opening balance: each
+        // opening deposit debits it and credits the new account, so the ledger's
+        // debit/credit invariant holds. It is expected to run negative — the
+        // "never negative" rule is for user accounts, not this issuer. Seeded by
+        // V3; see docs/adr/0011.
+        val GENESIS_ID: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
+    }
 
     var ownerName by Accounts.ownerName
+    var idempotencyKey by Accounts.idempotencyKey
     val entries by Entry referrersOn Entries.account
 
     /**

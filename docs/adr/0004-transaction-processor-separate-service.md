@@ -1,10 +1,10 @@
-# ADR 0004 — Separação do transaction-processor como microsserviço independente
+# ADR 0004 - Separação do transaction-processor como microsserviço independente
 
 ## Status
 Aceito
 
 ## Contexto
-O processamento assíncrono das transferências (RF03) poderia muito bem ter ficado dentro do próprio `account-service` — bastaria um listener do SQS rodando na mesma aplicação, isolado em uma thread pool separada da que atende as requisições HTTP. Essa abordagem já seria o suficiente para cumprir o requisito literal de ser "assíncrono via fila".
+O processamento assíncrono das transferências (RF03) poderia muito bem ter ficado dentro do próprio `account-service`: bastaria um listener do SQS rodando na mesma aplicação, isolado em uma thread pool separada da que atende as requisições HTTP. Essa abordagem já seria o suficiente para cumprir o requisito literal de ser "assíncrono via fila".
 
 No entanto, optamos por ir além e isolar esse processamento em um serviço totalmente separado e independente para deploy: o `transaction-processor`. Tomamos essa decisão porque o volume de transferências e o tráfego HTTP da API pública (`POST /accounts`, `GET /accounts/{id}`) crescem por motivos diferentes e em ritmos completamente distintos. Um pico repentino no processamento de transferências (como em finais de mês ou campanhas específicas) não pode, sob hipótese alguma, competir por CPU ou conexões de banco com os clientes que estão apenas tentando consultar seu saldo ou extrato.
 

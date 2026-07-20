@@ -5,6 +5,12 @@ plugins {
 
 description = "Consumes account-service events from AWS SQS and processes transactions asynchronously"
 
+// Generates META-INF/build-info.properties so /actuator/info reports the running
+// build (name, version, timestamp) instead of an empty payload.
+springBoot {
+    buildInfo()
+}
+
 dependencyManagement {
     imports {
         mavenBom(libs.spring.cloud.aws.dependencies.get().toString())

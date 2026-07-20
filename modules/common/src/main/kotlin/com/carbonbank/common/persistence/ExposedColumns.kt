@@ -20,6 +20,14 @@ fun Table.idempotencyKey(name: String): Column<IdempotencyKey> =
     varchar(name, 36).transform(wrap = { IdempotencyKey.fromUuid(it) }, unwrap = { it.value })
 
 /**
+ * Nullable variant of [idempotencyKey], for aggregates where the key is optional:
+ * the genesis account and test-created accounts have none, while every account
+ * created through the API carries one (see the unique index in V3).
+ */
+fun Table.idempotencyKeyNullable(name: String): Column<IdempotencyKey?> =
+    varchar(name, 36).nullable().transform(wrap = { it?.let(IdempotencyKey::fromUuid) }, unwrap = { it?.value })
+
+/**
  * Nullable variant of [money], for columns that only get a value once an
  * entry is posted (e.g. `balance_after`, which stays null while a hold is
  * still pending).
