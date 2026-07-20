@@ -1,4 +1,4 @@
-# ADR 0006 — Publicação confiável de eventos com Outbox Pattern
+# ADR 0006 - Publicação confiável de eventos com Outbox Pattern
 
 ## Status
 Aceito

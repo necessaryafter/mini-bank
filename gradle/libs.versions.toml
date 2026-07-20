@@ -6,6 +6,7 @@ java = "25"
 springdoc-openapi = "2.8.5"
 exposed = "0.61.0"
 spring-cloud-aws = "4.0.2"
+openpdf = "2.0.3"
 
 [libraries]
 jackson-module-kotlin = { module = "tools.jackson.module:jackson-module-kotlin" }
@@ -14,6 +15,9 @@ kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5" }
 
 spring-cloud-aws-dependencies = { module = "io.awspring.cloud:spring-cloud-aws-dependencies", version.ref = "spring-cloud-aws" }
 spring-cloud-aws-starter-sqs = { module = "io.awspring.cloud:spring-cloud-aws-starter-sqs" }
+spring-cloud-aws-starter-s3 = { module = "io.awspring.cloud:spring-cloud-aws-starter-s3" }
+
+openpdf = { module = "com.github.librepdf:openpdf", version.ref = "openpdf" }
 
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
 exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }

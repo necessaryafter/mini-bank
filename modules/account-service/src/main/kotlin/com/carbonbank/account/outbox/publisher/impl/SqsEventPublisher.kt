@@ -5,7 +5,7 @@ import io.awspring.cloud.sqs.operations.SqsTemplate
 import org.springframework.stereotype.Component
 
 /**
- * Publishes an already-serialized JSON [payload] as the raw body of an SQS
+ * Publishes an already-serialized JSON payload as the raw body of an SQS
  * message. The queue is created on first send (spring-cloud-aws default
  * QueueNotFoundStrategy.CREATE), so local dev needs no queue provisioning step.
  */

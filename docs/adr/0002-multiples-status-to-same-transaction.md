@@ -32,7 +32,7 @@ diferente nos dois enums, seria só ruído aumentando a chance de alguém usar o
 
 #### Positivas
 - **Estados ilegais deixam de ser representáveis.** O compilador garante que uma `Entry` nunca fica em
-  `FAILED` — não existe esse valor no tipo dela. Um `when` exaustivo sobre `EntryStatus` não precisa (nem pode)
+  `FAILED`: não existe esse valor no tipo dela. Um `when` exaustivo sobre `EntryStatus` não precisa (nem pode)
   tratar um caso que nunca acontece de verdade.
 - **Desacoplamento entre contrato de API e vocabulário interno do ledger.** `TransactionStatus` é ditado pelo
   `TASK.md` (o que a API expõe pro cliente). `EntryStatus` é detalhe de implementação do ledger. Se o contrato

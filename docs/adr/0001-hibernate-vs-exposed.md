@@ -9,7 +9,7 @@ linguagem não foi pensada pra esse uso.
 
 O maior problema é a falta de suporte a **value classes**: as entidades precisam ser **classes** comuns, não
 **data classes** (o padrão em Kotlin). Procurando uma alternativa mais idiomática e ainda compatível com Spring,
-lembrei do Exposed — que tem inclusive um plugin oficial de integração com Spring Boot.
+lembrei do Exposed, que tem inclusive um plugin oficial de integração com Spring Boot.
 
 ## Decisão
 Troquei todas as entidades já criadas em Hibernate para Exposed. Ficaram mais idiomáticas e mais fáceis de usar
@@ -31,7 +31,7 @@ automaticamente. No Exposed isso não existe: deletar um `Transaction`, por exem
 
 #### **Lazy loading transparente e fetch joins declarativos**
 O JPA usa proxies para carregar relações sob demanda de forma transparente, e permite `JOIN FETCH` para evitar
-N+1 de forma declarativa. No Exposed, `referrersOn`/`referencedOn` disparam uma query a cada acesso — evitar
+N+1 de forma declarativa. No Exposed, `referrersOn`/`referencedOn` disparam uma query a cada acesso; evitar
 N+1 exige escrever o join manualmente na DSL.
 
 #### **Spring Data JPA**

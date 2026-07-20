@@ -5,6 +5,11 @@ import com.carbonbank.account.controller.dto.TransferResponse
 import com.carbonbank.account.service.TransferService
 import com.carbonbank.common.transaction.RequestContext
 import com.carbonbank.common.types.IdempotencyKey
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -18,13 +23,32 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
+@Tag(name = "Transfers", description = "Submit money transfers and read their processing status")
 class TransferController(
     private val transferService: TransferService,
 ) {
 
     @PostMapping("/accounts/{accountId}/transfers")
+    @Operation(
+        summary = "Submit a transfer from an account",
+        description = "Accepts the transfer for asynchronous processing and returns 202 with its " +
+            "initial PENDING status. The transfer settles through the fraud/decision pipeline; poll " +
+            "GET /transfers/{id} for the terminal status.",
+    )
+    @ApiResponses(
+        ApiResponse(responseCode = "202", description = "Transfer accepted for processing"),
+        ApiResponse(responseCode = "400", description = "Malformed request or failed validation", content = []),
+        ApiResponse(responseCode = "404", description = "Source or destination account not found", content = []),
+        ApiResponse(responseCode = "409", description = "Idempotency key is still being processed", content = []),
+        ApiResponse(responseCode = "422", description = "Source and destination accounts are the same", content = []),
+    )
     fun createTransfer(
         @PathVariable accountId: UUID,
+        @Parameter(
+            description = "Client-generated UUID that makes the submission safe to retry; the same " +
+                "key returns the original transfer instead of creating a duplicate.",
+            required = true,
+        )
         @RequestHeader("Idempotency-Key") idempotencyKey: String,
         @Valid @RequestBody request: CreateTransferRequest,
         httpRequest: HttpServletRequest,
@@ -39,6 +63,11 @@ class TransferController(
     }
 
     @GetMapping("/transfers/{id}")
+    @Operation(summary = "Read a transfer's current status")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Transfer found"),
+        ApiResponse(responseCode = "404", description = "No transfer with this id", content = []),
+    )
     fun getTransfer(@PathVariable id: UUID): TransferResponse =
         transferService.findTransfer(id)
 
