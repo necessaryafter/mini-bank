@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 /**
  * Records outbox publishes instead of hitting SQS, so integration tests can
  * assert what the [com.carbonbank.account.outbox.OutboxPoller] shipped without
- * a live LocalStack. Being `@Primary`, it replaces the real
+ * a live floci. Being `@Primary`, it replaces the real
  * [com.carbonbank.account.outbox.publisher.impl.SqsEventPublisher] in every test context — so
  * no test ever tries to reach the SQS endpoint.
  */

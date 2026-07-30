@@ -39,7 +39,7 @@ dependencies {
     testImplementation(libs.spring.boot.testcontainers)
     testImplementation(libs.testcontainers.junit.jupiter)
     testImplementation(libs.testcontainers.mongodb)
-    testImplementation(libs.testcontainers.localstack)
+    testImplementation(libs.testcontainers.floci)
     testImplementation(libs.kotlin.test.junit5)
     testRuntimeOnly(libs.junit.platform.launcher)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")

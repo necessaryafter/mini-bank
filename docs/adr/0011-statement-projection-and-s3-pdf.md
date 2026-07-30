@@ -1,4 +1,4 @@
-# ADR 0012 - Extrato como projeção do ledger + PDF no S3
+# ADR 0011 - Extrato como projeção do ledger + PDF no S3
 
 ## Status
 Aceito
@@ -23,7 +23,7 @@ O export (`GET /accounts/{id}/statement/export?format=pdf`) renderiza o históri
 
 ### Detalhes de implementação
 - **Bucket criado na subida da aplicação** (`S3StatementStore.ensureBucket`, em `ApplicationReadyEvent`), não por script. O floci sobe vazio e ainda não há script de provisionamento; criar o bucket no boot mantém `docker compose up` autossuficiente. `createBucket` em `us-east-1` é idempotente (recriar como dono retorna 200). A falha é engolida com `warn`: um contexto que nunca exporta extrato (a maioria dos testes) não pode falhar a subida só porque o S3 está indisponível — o primeiro export é que exporia o erro.
-- **Path-style access ligado** (`spring.cloud.aws.s3.path-style-access-enabled=true`). Contra floci/LocalStack, sem isso o SDK monta URLs virtual-hosted (`bucket.localhost`) que não resolvem — e isso também quebraria a URL pré-assinada.
+- **Path-style access ligado** (`spring.cloud.aws.s3.path-style-access-enabled=true`). Contra o floci, sem isso o SDK monta URLs virtual-hosted (`bucket.localhost`) que não resolvem, e isso também quebraria a URL pré-assinada.
 - **Presign** via `S3Template.createSignedGetURL(bucket, key, ttl)`, TTL de 15 min.
 - **Metadados por evento** vêm do join com `transactions` (descrição, id da transação), sem N+1.
 
@@ -36,6 +36,6 @@ O export (`GET /accounts/{id}/statement/export?format=pdf`) renderiza o históri
 
 ### Os trade-offs (Negativas)
 - Cursor keyset expõe o `sequence` interno como token de paginação. É um detalhe de implementação vazando para a API; um cursor opaco (codificado) seria mais elegante, mas ficou fora de escopo.
-- A conta-genesis aparece no extrato dela com entries de `balance_after` null (débitos de abertura); é a mesma pegadinha registrada no ADR 0011, não um caso novo.
+- A conta-genesis aparece no extrato dela com entries de `balance_after` null (débitos de abertura); é a mesma pegadinha registrada no ADR 0010, não um caso novo.
 - PDF gerado sob demanda a cada chamada, sem cache: aceitável para o volume do teste, mas relançaria o mesmo arquivo em chamadas repetidas.
 - `REVERTED` está no filtro por completude, mas o caminho de reversão/compensação ainda não escreve esse status hoje — é preparação, não funcionalidade em uso.

@@ -50,7 +50,7 @@ dependencies {
     testImplementation(libs.testcontainers.junit.jupiter)
     testImplementation(libs.testcontainers.postgresql)
     testImplementation(libs.testcontainers.mongodb)
-    testImplementation(libs.testcontainers.localstack)
+    testImplementation(libs.testcontainers.floci)
     testImplementation(libs.kotlin.test.junit5)
     testRuntimeOnly(libs.junit.platform.launcher)
 }

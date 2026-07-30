@@ -31,7 +31,8 @@ dependencies {
     testFixturesImplementation(libs.testcontainers.junit.jupiter)
     testFixturesImplementation(libs.testcontainers.postgresql)
     testFixturesImplementation(libs.testcontainers.mongodb)
-    testFixturesImplementation(libs.testcontainers.localstack)
+    testFixturesImplementation(libs.testcontainers.floci)
+    testFixturesImplementation(libs.spring.boot.testcontainers.floci)
 
     testImplementation(libs.spring.boot.starter.webmvc.test)
     testImplementation(libs.kotlin.test.junit5)

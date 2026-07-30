@@ -36,7 +36,7 @@ O caminho da correção é claro, mas não cabe ao escopo:
 ## Decisão
 Para o escopo deste projeto, **aceito conscientemente os sinais auto-declarados** e documentamos a vulnerabilidade aqui, em vez de implementar a correção. As regras device/geo continuam no motor como **demonstração da técnica de scoring**, não como controle de segurança pronto para produção.
 
-O motivo é de custo/escopo, não de desconhecimento: fazer isso "de verdade" exigiria montar coisas que estão inteiramente fora de um teste técnico de backend rodando em LocalStack:
+O motivo é de custo/escopo, não de desconhecimento: fazer isso "de verdade" exigiria montar coisas que estão inteiramente fora de um teste técnico de backend rodando em floci:
 
 * um **ambiente de cliente** real (SDK mobile com attestation) para produzir um device fingerprint verificável;
 * um **ambiente análogo a produção** com topologia de rede real: load balancer, cadeia de proxies confiáveis, terminação TLS e a infraestrutura de geolocalização por IP.

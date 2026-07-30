@@ -1,4 +1,4 @@
-# ADR 0011 - Saldo inicial via conta-genesis (double-entry)
+# ADR 0010 - Saldo inicial via conta-genesis (double-entry)
 
 ## Status
 Aceito
