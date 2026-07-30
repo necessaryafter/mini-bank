@@ -18,7 +18,7 @@ Legenda de prioridade: 🔴 bloqueia avaliação · 🟡 pedido no escopo · �
 - [x] `POST /accounts` — cria conta com saldo inicial (padrão zero), idempotente via
       `Idempotency-Key` (Redis + índice único em `accounts`).
 - [x] `GET /accounts/{id}` — retorna dados da conta e saldo atual (404 via `ApiException`).
-- [x] Saldo inicial modelado como double-entry real (conta-genesis, ver ADR 0011); saldo
+- [x] Saldo inicial modelado como double-entry real (conta-genesis, ver ADR 0010); saldo
       de conta de usuário nunca negativo.
 - [x] `AccountController` + `AccountService` + DTOs (`CreateAccountRequest`, `AccountResponse`).
 - [x] Migration `V3` (coluna idempotência + seed da genesis) e `AccountServiceTest` (6 testes).
@@ -27,16 +27,22 @@ Legenda de prioridade: 🔴 bloqueia avaliação · 🟡 pedido no escopo · �
 - [x] `GET /accounts/{id}/statement` — histórico de movimentações (débitos, créditos,
       transferências revertidas) com metadados de cada evento.
 - [x] Fonte do extrato decidida: projeção a partir das `entries` (Postgres), não Mongo
-      (ver ADR 0012 — o ledger já é a fonte de verdade).
+      (ver ADR 0011, o ledger já é a fonte de verdade).
 - [x] Paginação keyset por `sequence` (cursor), aproveitando o índice
       `idx_entries_account_id_sequence`.
 - [x] Export em PDF armazenado no S3 com URL pré-assinada
       (`GET /accounts/{id}/statement/export?format=pdf`).
 
-### 🔴 RF05 — DLQ (não configurada)
-- [ ] Criar a fila DLQ e a *redrive policy* (`maxReceiveCount`) nas filas de entrada
-      e de decisão.
-- [ ] Garantir que uma mensagem venenosa vá pra DLQ sem travar as demais.
+### ✅ RF05 — DLQ (feito)
+- [x] Criar a fila DLQ e a *redrive policy* (`maxReceiveCount`) nas filas de entrada
+      (`validate-transfer`) e de decisão (`transfer-decision`). Cada serviço
+      provisiona a DLQ/policy da fila que ele consome, no boot
+      (`ValidateTransferDlqProvisioner`, `TransferDecisionDlqProvisioner`; ver
+      ADR 0012), no mesmo espírito do bucket S3 (ADR 0011), sem script externo.
+- [x] Garantir que uma mensagem venenosa vá pra DLQ sem travar as demais: já
+      valia antes (os listeners deixam exceção subir, SQS reencaminha), o que
+      faltava era a `RedrivePolicy` para o SQS ter onde mandar a mensagem depois
+      de N tentativas.
 - [ ] (Opcional) Teste de integração provando o roteamento pra DLQ após N tentativas.
 
 ---
@@ -58,7 +64,7 @@ no compose e o floci sobe vazio, sem filas nem bucket.
 
 ### 🟡 S3 — arquivo de extrato (feito; comprovante de transferência pendente)
 - [x] Gerar o extrato em PDF e armazená-lo no S3 (via floci), expondo uma URL
-      pré-assinada (ver RF04 e ADR 0012). O código de S3 (upload + presign +
+      pré-assinada (ver RF04 e ADR 0011). O código de S3 (upload + presign +
       criação de bucket no boot) já existe em `S3StatementStore`.
 - [ ] (Opcional) Reaproveitar o mesmo mecanismo para o comprovante da transferência
       concluída, que o `TASK.md` cita explicitamente.
